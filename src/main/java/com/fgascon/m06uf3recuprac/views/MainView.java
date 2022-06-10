@@ -1,8 +1,9 @@
 package com.fgascon.m06uf3recuprac.views;
 
+import com.fgascon.m06uf3recuprac.Main;
+import com.fgascon.m06uf3recuprac.connections.MongoDBConnectionException;
 import com.fgascon.m06uf3recuprac.controllers.DomainException;
 import com.fgascon.m06uf3recuprac.controllers.RepositoryController;
-import com.fgascon.m06uf3recuprac.utils.Convert;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,9 +19,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.fgascon.m06uf3recuprac.controllers.RepositoryController.*;
 import static com.fgascon.m06uf3recuprac.utils.OS.homeDirectory;
 
-public class HelloController implements Initializable {
+public class MainView implements Initializable {
+
+    private final String REPOSITORY_URL_FXML = "/com/fgascon/m06uf3recuprac/repository_view";
     public ListView<String> repositoryList;
     @FXML
     private Label welcomeText;
@@ -37,7 +41,7 @@ public class HelloController implements Initializable {
         repositoryList.getItems().clear();
         List<String> repositoryNames;
 
-        repositoryNames = RepositoryController.getRepositoryNames();
+        repositoryNames = getRepositoryNames();
         repositoryList.getItems().addAll(repositoryNames);
 
     }
@@ -53,7 +57,7 @@ public class HelloController implements Initializable {
 
         try {
             String remotePath = directory.getCanonicalPath();
-            RepositoryController.createRepository(directory);
+            createRepository(directory);
             welcomeText.setText(remotePath);
         } catch (IOException e) {
             welcomeText.setText("Error trying to open selected directory");
@@ -71,7 +75,7 @@ public class HelloController implements Initializable {
         }
 
         try {
-            RepositoryController.deleteRepository(selectedRepository);
+            deleteRepository(selectedRepository);
         } catch (Exception e) {
 
         }
@@ -80,18 +84,20 @@ public class HelloController implements Initializable {
     }
 
     public void openRepository(ActionEvent actionEvent) {
+
+        String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();
+
+        if(!repositoryExists(selectedRepository)) return; // add error behaviour
+
+        Main.connection.setCollection(selectedRepository);
+
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/delete_repository_dialog.fxml"));
-            DialogPane deleteRepositoryView = fxmlLoader.load();
-
-            Dialog<ButtonType> deleteRepositoryDialog = new Dialog<>();
-            deleteRepositoryDialog.setDialogPane(deleteRepositoryView);
-
-            deleteRepositoryDialog.showAndWait();
-            loadRepositories();
+            Main.connection.connectToRepository();
+            Main.changeScene(REPOSITORY_URL_FXML);
+        } catch (MongoDBConnectionException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            System.out.println("per acabar");
+            throw new RuntimeException(e);
         }
     }
 }
