@@ -2,8 +2,12 @@ package com.fgascon.m06uf3recuprac.services;
 
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnection;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnectionException;
+import com.fgascon.m06uf3recuprac.controllers.FileController;
+import com.fgascon.m06uf3recuprac.models.RemoteFile;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoIterable;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -46,5 +50,20 @@ public class RepositoryService {
         MongoCollection<Document> repository = connection.getDatabase().getCollection(repositoryName);
 
         repository.drop();
+    }
+
+    public static void cloneRepository(String repository, MongoDBConnection connection) throws DataException {
+
+        // estaria bien optimizar esto
+        MongoCursor<Document> files = connection.getCollection().find(Filters.exists("folder")).iterator();
+
+        while (files.hasNext()) {
+            try {
+                RemoteFile remote = RemoteFile.DocumentToRemoteFile(files.next());
+                FileService.cloneRemoteFile(remote);
+            } catch (DataException e) {
+                throw new DataException(e.getMessage());
+            }
+        }
     }
 }

@@ -66,6 +66,7 @@ public class MainView implements Initializable {
             welcomeText.setText(e.getMessage());
         }
 
+        loadRepositories();
     }
 
     public void dropRepository(ActionEvent actionEvent) {
@@ -88,7 +89,7 @@ public class MainView implements Initializable {
 
         String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();
 
-        if(!repositoryExists(selectedRepository)) return; // add error behaviour
+        if (!repositoryExists(selectedRepository)) return; // add error behaviour
 
         Main.connection.setCollection(selectedRepository);
 
@@ -106,10 +107,15 @@ public class MainView implements Initializable {
 
         String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();
 
-        if(!repositoryExists(selectedRepository)) return; // add error behaviour
+        if (!repositoryExists(selectedRepository)) return; // add error behaviour
 
         Main.connection.setCollection(selectedRepository);
 
-        RepositoryController.cloneRepository(selectedRepository);
+        try {
+            Main.connection.connectToRepository();
+            RepositoryController.cloneRepository(selectedRepository);
+        } catch (DomainException | MongoDBConnectionException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.fgascon.m06uf3recuprac.controllers;
 
 import com.fgascon.m06uf3recuprac.Main;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnection;
+import com.fgascon.m06uf3recuprac.models.RemoteFile;
 import com.fgascon.m06uf3recuprac.services.DataException;
 import com.fgascon.m06uf3recuprac.services.FileService;
 import com.fgascon.m06uf3recuprac.utils.Convert;
@@ -10,6 +11,10 @@ import org.bson.Document;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -117,4 +122,5 @@ public class FileController {
         }
 
     }
+
 }

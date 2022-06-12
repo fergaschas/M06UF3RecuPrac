@@ -2,6 +2,7 @@ package com.fgascon.m06uf3recuprac.controllers;
 
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnection;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnectionException;
+import com.fgascon.m06uf3recuprac.services.DataException;
 import com.fgascon.m06uf3recuprac.services.RepositoryService;
 import com.fgascon.m06uf3recuprac.utils.Convert;
 
@@ -66,7 +67,12 @@ public class RepositoryController {
         return repos.stream().anyMatch(repo -> repo.equals(repositoryName));
     }
 
-    public static void cloneRepository(String selectedRepository) {
-
+    public static void cloneRepository(String repository) throws DomainException {
+        MongoDBConnection connection = MongoDBConnection.getInstance();
+        try {
+            RepositoryService.cloneRepository(repository, connection);
+        } catch (DataException e) {
+            throw new DomainException(e.getMessage());
+        }
     }
 }

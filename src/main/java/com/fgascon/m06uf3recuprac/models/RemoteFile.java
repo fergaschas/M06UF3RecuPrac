@@ -27,7 +27,7 @@ public class RemoteFile {
         file.setExtension(doc.getString("extension"));
         file.setFolder(doc.getString("folder"));
         file.setMd5(doc.getString("md5"));
-        file.setLastModified(Convert.ToLocalDateTime(doc.getString("date")));
+        file.setLastModified(Convert.ToLocalDateTime(doc.getString("lastModified")));
         file.setFileId(doc.getObjectId("fileId"));
         file.setText(doc.getString("text"));
 

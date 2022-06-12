@@ -13,6 +13,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 public class FileService {
@@ -71,7 +74,7 @@ public class FileService {
         Document file = connection.getCollection()
                 .find(Filters.and(Filters.eq("name", name),
                         Filters.eq("folder", folder)))
-                .sort(Sorts.ascending("lastModified")).first();
+                .sort(Sorts.descending("lastModified")).first();
 
         return file;
     }
@@ -93,6 +96,10 @@ public class FileService {
             }
         }
 
+        writeDataIntoFile(localFile, text);
+    }
+
+    private static void writeDataIntoFile(File localFile, String text) throws DataException {
         try {
             FileWriter fw = new FileWriter(localFile);
             BufferedWriter bw = new BufferedWriter(fw);
@@ -103,6 +110,23 @@ public class FileService {
         }
     }
 
+    public static void cloneRemoteFile(RemoteFile remote) throws DataException {
+        String remotePath = remote.getFolder() + Convert.GET_URL_SEPARATOR + remote.getName();
+        String sLocalFolder = Convert.toLocalPath(remote.getFolder());
+        Path localFolder = Paths.get(sLocalFolder);
+        File newLocalFile = new File(Convert.toLocalPath(remotePath));
+
+        try {
+            Files.createDirectories(localFolder);
+            newLocalFile.delete();
+            newLocalFile.createNewFile();
+            writeDataIntoFile(newLocalFile, remote.getText());
+        } catch (IOException e) {
+            throw new DataException("Error creating parent directories");
+        }
+
+
+    }
     private static String getTextFromRemote(Document doc) {
         return doc.getString("text");
     }
