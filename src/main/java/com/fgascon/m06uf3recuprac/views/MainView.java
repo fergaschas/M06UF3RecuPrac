@@ -3,6 +3,7 @@ package com.fgascon.m06uf3recuprac.views;
 import com.fgascon.m06uf3recuprac.Main;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnectionException;
 import com.fgascon.m06uf3recuprac.controllers.DomainException;
+import com.fgascon.m06uf3recuprac.controllers.FolderController;
 import com.fgascon.m06uf3recuprac.controllers.RepositoryController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -99,5 +100,16 @@ public class MainView implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void cloneRepository(ActionEvent actionEvent) {
+
+        String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();
+
+        if(!repositoryExists(selectedRepository)) return; // add error behaviour
+
+        Main.connection.setCollection(selectedRepository);
+
+        RepositoryController.cloneRepository(selectedRepository);
     }
 }

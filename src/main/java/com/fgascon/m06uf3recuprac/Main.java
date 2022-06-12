@@ -21,7 +21,7 @@ public class Main extends Application {
         connection = MongoDBConnection.getInstance();
         connection.connectDB();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main_view.fxml"));
-        scene = new Scene(fxmlLoader.load(), 800, 800);
+        scene = new Scene(fxmlLoader.load(), 1280, 920);
         stage.setTitle("GET BD");
         stage.setScene(scene);
         stage.show();

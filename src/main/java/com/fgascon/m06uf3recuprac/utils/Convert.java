@@ -7,9 +7,10 @@ import static com.fgascon.m06uf3recuprac.utils.Regex.pathSeparator;
 
 public class Convert {
 
-    private static final String GET_URL_SEPARATOR = "_";
+    public static final String GET_URL_SEPARATOR = "_";
+    public static final char GET_URL_SEPARATOR_CHAR = '_';
 
-    public static String toRemotePath(String localPath){
+    public static String toRemotePath(String localPath) {
         String remotePath;
 
         remotePath = localPath
@@ -17,6 +18,15 @@ public class Convert {
                 .replaceAll(pathSeparator(), GET_URL_SEPARATOR);
 
         return remotePath;
+    }
+
+    public static String toLocalPath(String remotePath) {
+        StringBuilder localPath = new StringBuilder();
+
+        localPath.append(OS.getDiskDrive())
+                .append(remotePath.replaceAll(GET_URL_SEPARATOR, OS.getSeparator()));
+
+        return localPath.toString();
     }
 
     public static LocalDateTime ToLocalDateTime(String date) {

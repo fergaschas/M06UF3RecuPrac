@@ -14,6 +14,7 @@ public class RemoteFile {
     String md5;
     LocalDateTime lastModified;
     ObjectId fileId;
+    String text;
 
     public RemoteFile() {
 
@@ -28,6 +29,7 @@ public class RemoteFile {
         file.setMd5(doc.getString("md5"));
         file.setLastModified(Convert.ToLocalDateTime(doc.getString("date")));
         file.setFileId(doc.getObjectId("fileId"));
+        file.setText(doc.getString("text"));
 
         return file;
     }
@@ -39,7 +41,8 @@ public class RemoteFile {
                 .append("folder", folder)
                 .append("md5", md5)
                 .append("lastModified", Convert.toString(lastModified))
-                .append("fileId", fileId);
+                .append("fileId", fileId)
+                .append("text", text);
 
         return document;
     }
@@ -90,5 +93,13 @@ public class RemoteFile {
 
     public void setFileId(ObjectId fileId) {
         this.fileId = fileId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

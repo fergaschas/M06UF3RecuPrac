@@ -65,4 +65,8 @@ public class RepositoryController {
         List<String> repos = getRepositoryNames();
         return repos.stream().anyMatch(repo -> repo.equals(repositoryName));
     }
+
+    public static void cloneRepository(String selectedRepository) {
+
+    }
 }
