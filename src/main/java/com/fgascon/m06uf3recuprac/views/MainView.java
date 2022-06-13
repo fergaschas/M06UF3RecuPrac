@@ -5,6 +5,7 @@ import com.fgascon.m06uf3recuprac.connections.MongoDBConnectionException;
 import com.fgascon.m06uf3recuprac.controllers.DomainException;
 import com.fgascon.m06uf3recuprac.controllers.FolderController;
 import com.fgascon.m06uf3recuprac.controllers.RepositoryController;
+import com.fgascon.m06uf3recuprac.views.dialogs.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -60,10 +61,8 @@ public class MainView implements Initializable {
             String remotePath = directory.getCanonicalPath();
             createRepository(directory);
             welcomeText.setText(remotePath);
-        } catch (IOException e) {
-            welcomeText.setText("Error trying to open selected directory");
-        } catch (DomainException e) {
-            welcomeText.setText(e.getMessage());
+        } catch (IOException | DomainException e) {
+            AlertMessage.showError("ERROR", e.getMessage());
         }
 
         loadRepositories();
@@ -78,8 +77,8 @@ public class MainView implements Initializable {
 
         try {
             deleteRepository(selectedRepository);
-        } catch (Exception e) {
-
+        } catch (DomainException e) {
+            AlertMessage.showError("ERROR", e.getMessage());
         }
 
         loadRepositories();
@@ -96,10 +95,8 @@ public class MainView implements Initializable {
         try {
             Main.connection.connectToRepository();
             Main.changeScene(REPOSITORY_URL_FXML);
-        } catch (MongoDBConnectionException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (MongoDBConnectionException | IOException e) {
+            AlertMessage.showError("ERROR", e.getMessage());
         }
     }
 
@@ -115,7 +112,7 @@ public class MainView implements Initializable {
             Main.connection.connectToRepository();
             RepositoryController.cloneRepository(selectedRepository);
         } catch (DomainException | MongoDBConnectionException e) {
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
     }
 }

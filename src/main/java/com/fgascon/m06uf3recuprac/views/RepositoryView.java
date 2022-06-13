@@ -9,6 +9,8 @@ import com.fgascon.m06uf3recuprac.controllers.FolderController;
 import com.fgascon.m06uf3recuprac.services.FolderService;
 import com.fgascon.m06uf3recuprac.utils.Convert;
 import com.fgascon.m06uf3recuprac.utils.OS;
+import com.fgascon.m06uf3recuprac.views.dialogs.AlertMessage;
+import com.fgascon.m06uf3recuprac.views.dialogs.ComparableFilesDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,6 +25,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -57,8 +60,10 @@ public class RepositoryView implements Initializable {
             folders = FolderController.getFolderNames();
             folderList.getItems().addAll(folders);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            AlertMessage.showError("ERROR", e.getMessage());
         }
+        folderList.getSelectionModel().selectFirst();
+        refreshFolderPreviewList(folderList.getSelectionModel().getSelectedItem());
     }
 
     private void refreshFolderPreviewList(String folder) {
@@ -71,7 +76,7 @@ public class RepositoryView implements Initializable {
             folderItems = FolderController.getFolderContent(folder);
             folderPreviewList.getItems().addAll(folderItems);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
     }
 
@@ -94,10 +99,11 @@ public class RepositoryView implements Initializable {
         try {
             FolderController.addFolderToRemoteRepository(localDirectory);
         } catch (DomainException e) {
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
 
         refreshFolderList();
+
     }
 
     public void deleteFolder(ActionEvent actionEvent) {
@@ -108,7 +114,6 @@ public class RepositoryView implements Initializable {
         FolderController.deleteFolderFromRepository(selectedFolder);
 
         refreshFolderList();
-        refreshFolderPreviewList(null);
     }
 
     public void addFile(ActionEvent actionEvent) {
@@ -129,7 +134,7 @@ public class RepositoryView implements Initializable {
         try {
             FileController.addFileToRemoteRepository(localFile);
         } catch (DomainException e) {
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
 
         refreshFolderPreviewList(remoteFolder);
@@ -144,7 +149,7 @@ public class RepositoryView implements Initializable {
         try {
             FileController.deleteFileFromRepository(selectedFile, selectedFolder);
         } catch (DomainException e) {
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
 
         refreshFolderPreviewList(selectedFolder);
@@ -158,7 +163,7 @@ public class RepositoryView implements Initializable {
         try{
             FolderController.downloadRemoteFolder(remoteFolder);
         }catch (DomainException e){
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
     }
 
@@ -172,7 +177,7 @@ public class RepositoryView implements Initializable {
         try {
             FileController.downloadRemoteFile(remoteName, remoteFolder);
         } catch (DomainException e) {
-            System.out.println(e.getMessage());
+            AlertMessage.showError("ERROR", e.getMessage());
         }
     }
 
@@ -180,7 +185,17 @@ public class RepositoryView implements Initializable {
         try {
             Main.changeScene(MAIN_VIEW_URL_FXML);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            AlertMessage.showError("ERROR", e.getMessage());
         }
+    }
+
+    public void compareFolder(ActionEvent actionEvent) {
+        var a = new ArrayList<String>();
+        a.add("proba");
+        ComparableFilesDialog comparableFilesDialog = new ComparableFilesDialog(a);
+        comparableFilesDialog.showDialog();
+    }
+
+    public void compareFile(ActionEvent actionEvent) {
     }
 }
