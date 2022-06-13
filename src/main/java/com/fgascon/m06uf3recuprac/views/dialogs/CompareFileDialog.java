@@ -1,9 +1,12 @@
 package com.fgascon.m06uf3recuprac.views.dialogs;
 
+import com.fgascon.m06uf3recuprac.controllers.DomainException;
+import com.fgascon.m06uf3recuprac.controllers.FileController;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
+import java.util.Collections;
 import java.util.List;
 
 public class CompareFileDialog {
@@ -12,12 +15,16 @@ public class CompareFileDialog {
     ListView<String> localLinesList;
     ListView<String> remoteLinesList;
     private String fileName;
+    private String folderName;
     private BorderPane pane;
 
-    public CompareFileDialog(String fileName, List<String> localText, List<String> remoteText) {
-        this.fileName = fileName;
-        this.localText = localText;
-        this.remoteText = remoteText;
+    public CompareFileDialog(String remoteFile, String remoteFolder) {
+        this.fileName = remoteFile;
+        this.folderName = remoteFolder;
+
+        this.remoteText = getRemoteFileText();
+        this.localText = getLocalFileText();
+
         this.pane = generatePane(localText, remoteText);
     }
 
@@ -47,5 +54,21 @@ public class CompareFileDialog {
         pane.setRight(remoteLinesList);
 
         return pane;
+    }
+
+    private List<String> getLocalFileText() {
+        List<String> localText = Collections.emptyList();
+
+        try {
+            localText = FileController.getLocalFileText(fileName, folderName);
+        } catch (DomainException e) {
+            AlertMessage.showError("Error", e.getMessage());
+        }
+
+        return localText;
+    }
+
+    private List<String> getRemoteFileText() {
+        return FileController.getRemoteFileText(fileName, folderName);
     }
 }

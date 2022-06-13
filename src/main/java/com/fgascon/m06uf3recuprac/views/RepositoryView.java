@@ -11,6 +11,7 @@ import com.fgascon.m06uf3recuprac.utils.Convert;
 import com.fgascon.m06uf3recuprac.utils.OS;
 import com.fgascon.m06uf3recuprac.views.dialogs.AlertMessage;
 import com.fgascon.m06uf3recuprac.views.dialogs.ComparableFilesDialog;
+import com.fgascon.m06uf3recuprac.views.dialogs.CompareFileDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -190,12 +191,31 @@ public class RepositoryView implements Initializable {
     }
 
     public void compareFolder(ActionEvent actionEvent) {
-        var a = new ArrayList<String>();
-        a.add("proba");
-        ComparableFilesDialog comparableFilesDialog = new ComparableFilesDialog(a);
+
+        String remoteFolder = folderList.getSelectionModel().getSelectedItem();
+
+        List<String> remotePaths = FolderController.getRecursiveFolderContent(remoteFolder);;
+        ComparableFilesDialog comparableFilesDialog = new ComparableFilesDialog(remotePaths);
         comparableFilesDialog.showDialog();
     }
 
     public void compareFile(ActionEvent actionEvent) {
+        String remoteFolder = folderList.getSelectionModel().getSelectedItem();
+        String remoteFile = folderPreviewList.getSelectionModel().getSelectedItem();
+
+        if (remoteFile == null) {
+            AlertMessage.showError("ERROR", "You have to select a file from the list");
+            return;
+        }
+
+        try {
+            FileController.checkCompareFiles(remoteFile, remoteFolder);
+        } catch (DomainException e) {
+            AlertMessage.showError("Error", e.getMessage());
+            return;
+        }
+
+        CompareFileDialog compareFileDialog = new CompareFileDialog(remoteFile, remoteFolder);
+        compareFileDialog.showDialog();
     }
 }

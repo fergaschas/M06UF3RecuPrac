@@ -1,5 +1,8 @@
 package com.fgascon.m06uf3recuprac.views.dialogs;
 
+import com.fgascon.m06uf3recuprac.controllers.DomainException;
+import com.fgascon.m06uf3recuprac.controllers.FileController;
+import com.fgascon.m06uf3recuprac.utils.Extract;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -51,14 +54,25 @@ public class ComparableFilesDialog {
     }
 
     private void compareFile() {
-        String remoteFile = comparableFilesList.getSelectionModel().getSelectedItem();
+        String remotePath = comparableFilesList.getSelectionModel().getSelectedItem();
 
-        if (remoteFile == null) {
+
+        if (remotePath == null) {
             AlertMessage.showError("ERROR", "You have to select a file from the list");
             return;
         }
 
-        CompareFileDialog compareFileDialog = new CompareFileDialog("a", List.of("a", "b"), List.of("a", "c"));
+        String remoteFile = Extract.nameFromRemotePath(remotePath);
+        String remoteFolder = Extract.folderFromRemotePath(remotePath);
+
+        try {
+            FileController.checkCompareFiles(remoteFile, remoteFolder);
+        } catch (DomainException e) {
+            AlertMessage.showError("Error", e.getMessage());
+            return;
+        }
+
+        CompareFileDialog compareFileDialog = new CompareFileDialog(remoteFile, remoteFolder);
         compareFileDialog.showDialog();
 
     }

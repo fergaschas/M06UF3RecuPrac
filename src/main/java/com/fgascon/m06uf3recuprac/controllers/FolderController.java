@@ -2,7 +2,6 @@ package com.fgascon.m06uf3recuprac.controllers;
 
 import com.fgascon.m06uf3recuprac.Main;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnection;
-import com.fgascon.m06uf3recuprac.services.FileService;
 import com.fgascon.m06uf3recuprac.services.FolderService;
 import com.fgascon.m06uf3recuprac.utils.Convert;
 
@@ -94,5 +93,15 @@ public class FolderController {
         }
 
         return errorFiles.toString();
+    }
+
+    public static List<String> getRecursiveFolderContent(String remoteFolder) {
+        List<String> folderItems = Collections.emptyList();
+
+        MongoDBConnection connection = MongoDBConnection.getInstance();
+
+        folderItems = FolderService.getRecursiveFolderItems(remoteFolder, connection);
+
+        return folderItems;
     }
 }

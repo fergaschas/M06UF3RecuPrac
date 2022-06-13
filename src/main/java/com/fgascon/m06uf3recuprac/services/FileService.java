@@ -9,14 +9,13 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 public class FileService {
 
@@ -127,7 +126,28 @@ public class FileService {
 
 
     }
+
     private static String getTextFromRemote(Document doc) {
         return doc.getString("text");
     }
+
+    public static List<String> getLocalTextLines(File localFile) throws DataException {
+        List<String> localLines = Collections.emptyList();
+        try {
+            String localText = Extract.textFromFile(localFile);
+            localLines = Extract.linesFromText(localText);
+        } catch (FileNotFoundException e) {
+            throw new DataException("Error reading the file");
+        }
+
+        return localLines;
+    }
+
+    public static List<String> getRemoteTextLines(String remoteName, String remoteFolder, MongoDBConnection connection) {
+        Document remoteDoc = findRemoteFile(remoteName, remoteFolder, connection);
+        String remoteText = getTextFromRemote(remoteDoc);
+
+        return Extract.linesFromText(remoteText);
+    }
+
 }

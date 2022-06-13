@@ -38,4 +38,7 @@ public class Convert {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return lastModified.format(formatter);
     }
+    public static String getRemotePath(String remoteName, String remoteFolder) {
+        return remoteFolder + GET_URL_SEPARATOR + remoteName;
+    }
 }

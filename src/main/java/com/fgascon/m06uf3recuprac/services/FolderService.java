@@ -3,17 +3,19 @@ package com.fgascon.m06uf3recuprac.services;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnection;
 import com.fgascon.m06uf3recuprac.models.RemoteFile;
 import com.fgascon.m06uf3recuprac.utils.Convert;
+import com.fgascon.m06uf3recuprac.utils.Extract;
 import com.fgascon.m06uf3recuprac.utils.OS;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.BasicBSONList;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static com.fgascon.m06uf3recuprac.utils.Convert.GET_URL_SEPARATOR;
 import static com.fgascon.m06uf3recuprac.utils.Convert.GET_URL_SEPARATOR_CHAR;
@@ -47,7 +49,7 @@ public class FolderService {
      * @return a list of file names
      */
     public static List<String> getFolderItems(String remoteFolder, MongoDBConnection connection) {
-        List<String> folderNames = new ArrayList<>();
+        List<String> fileNames = new ArrayList<>();
 
         MongoCursor<String> cursorFolderItems = connection.getCollection()
                 .distinct("name", String.class)
@@ -55,12 +57,12 @@ public class FolderService {
                 .iterator();
 
         while (cursorFolderItems.hasNext()) {
-            folderNames.add(cursorFolderItems.next());
+            fileNames.add(cursorFolderItems.next());
         }
 
         cursorFolderItems.close();
 
-        return folderNames;
+        return fileNames;
     }
 
     public static void deleteFilesFromFolder(String remoteDirectory, MongoDBConnection connection) {
@@ -73,5 +75,31 @@ public class FolderService {
         }
 
         cursorFolderItems.close();
+    }
+
+    public static List<String> getRecursiveFolderItems(String remoteFolder, MongoDBConnection connection) {
+        List<String> fileNames = new ArrayList<>();
+
+        MongoCursor<Document> cursorFolderItems = connection.getCollection()
+                .find(Filters.regex("folder",remoteFolder))
+                .sort(Sorts.ascending("folder")).iterator();
+
+        while (cursorFolderItems.hasNext()) {
+            Document file = cursorFolderItems.next();
+            RemoteFile remoteFile = RemoteFile.DocumentToRemoteFile(file);
+
+            if(!remoteFolder.equalsIgnoreCase(remoteFile.getFolder())){
+                fileNames.addAll(getRecursiveFolderItems(remoteFile.getFolder(), connection));
+            }else{
+                String remotePath = Convert.getRemotePath(remoteFile.getName(), remoteFile.getFolder());
+                fileNames.add(remotePath);
+            }
+        }
+        cursorFolderItems.close();
+
+        // aixo es fa per eliminar els duplicats(repetits amb diferents dates)
+        fileNames = new ArrayList<>(new LinkedHashSet<>(fileNames));
+
+        return fileNames;
     }
 }

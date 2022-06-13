@@ -5,9 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Scanner;
-import java.util.TimeZone;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Extract {
     public static String fileExtension(File file) {
@@ -66,10 +65,29 @@ public class Extract {
     public static String textFromFile(File file) throws FileNotFoundException {
         Scanner read = new Scanner(file);
         StringBuilder text = new StringBuilder();
+
         while(read.hasNextLine()){
             text.append(read.nextLine()).append(System.lineSeparator());
         }
 
         return text.toString();
+    }
+
+    public static List<String> linesFromText(String text) {
+        List<String> lines;
+
+        lines = Arrays.stream(text.split("\n")).collect(Collectors.toList());
+
+        return lines;
+    }
+
+    public static String nameFromRemotePath(String remotePath) {
+        int lastSeparator = remotePath.lastIndexOf(Convert.GET_URL_SEPARATOR);
+        return remotePath.substring(lastSeparator + 1);
+    }
+
+    public static String folderFromRemotePath(String remotePath) {
+        int lastSeparator = remotePath.lastIndexOf(Convert.GET_URL_SEPARATOR);
+        return remotePath.substring(0, lastSeparator);
     }
 }

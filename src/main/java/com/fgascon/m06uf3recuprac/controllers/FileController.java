@@ -2,7 +2,6 @@ package com.fgascon.m06uf3recuprac.controllers;
 
 import com.fgascon.m06uf3recuprac.Main;
 import com.fgascon.m06uf3recuprac.connections.MongoDBConnection;
-import com.fgascon.m06uf3recuprac.models.RemoteFile;
 import com.fgascon.m06uf3recuprac.services.DataException;
 import com.fgascon.m06uf3recuprac.services.FileService;
 import com.fgascon.m06uf3recuprac.utils.Convert;
@@ -11,20 +10,18 @@ import org.bson.Document;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 public class FileController {
 
     public static void addFileToRemoteRepository(File localFile) throws DomainException {
         MongoDBConnection connection = Main.connection;
 
-        if (!localFile.isFile()) throw new DomainException("This is not a file!");
+        if (!localFile.isFile())
+            throw new DomainException("This is not a file!");
         if (!hasRequiredExtension(localFile))
             throw new DomainException("The file doesn't have the required extension");
 
@@ -123,4 +120,44 @@ public class FileController {
 
     }
 
+    public static List<String> getLocalFileText(String remoteName, String remoteFolder) throws DomainException {
+
+        String remotePath = Convert.getRemotePath(remoteName, remoteFolder);
+        String localPath = Convert.toLocalPath(remotePath);
+        File localFile = new File(localPath);
+        List<String> localLines = Collections.emptyList();
+
+        try {
+            localLines = FileService.getLocalTextLines(localFile);
+        } catch (DataException e) {
+            throw new DomainException(e.getMessage());
+        }
+
+        return localLines;
+    }
+
+    public static List<String> getRemoteFileText(String remoteName, String remoteFolder) {
+        MongoDBConnection connection = MongoDBConnection.getInstance();
+
+        List<String> remoteLines = FileService.getRemoteTextLines(remoteName, remoteFolder, connection);
+
+        return remoteLines;
+    }
+
+    public static void checkCompareFiles(String remoteName, String remoteFolder) throws DomainException {
+        MongoDBConnection connection = MongoDBConnection.getInstance();
+        String remotePath = Convert.getRemotePath(remoteName, remoteFolder);
+        String localPath = Convert.toLocalPath(remotePath);
+
+        File localFile = new File(localPath);
+
+        Document remoteFile = FileService.findRemoteFile(remoteName, remoteFolder, connection);
+
+        if (remoteFile != null) {
+            if (hasTheSameChecksum(localFile, remoteFile))
+                throw new DomainException("The md5 is the same");
+            if (isOlderThanRemote(localFile, remoteFile))
+                throw new DomainException("The last modification is not after the remote file");
+        }
+    }
 }
