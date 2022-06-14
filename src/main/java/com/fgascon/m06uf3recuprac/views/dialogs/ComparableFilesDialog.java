@@ -20,6 +20,9 @@ public class ComparableFilesDialog {
         this.pane = generatePane(remoteFiles);
     }
 
+    /**
+     * Vista que muestra los archivos remotos que se pueden comparar
+     */
     public void showDialog() {
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -34,6 +37,11 @@ public class ComparableFilesDialog {
 
     }
 
+    /**
+     * Genera la vista con componentes fxml y llena la lista con las direcciones remotas de los archivos.
+     * @param remoteFiles
+     * @return
+     */
     private BorderPane generatePane(List<String> remoteFiles) {
         BorderPane pane = new BorderPane();
 
@@ -53,6 +61,9 @@ public class ComparableFilesDialog {
         return pane;
     }
 
+    /**
+     * Llama a la vista de comparador de ficheros si el fichero se puede comparar.
+     */
     private void compareFile() {
         String remotePath = comparableFilesList.getSelectionModel().getSelectedItem();
 

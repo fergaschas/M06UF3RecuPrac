@@ -14,6 +14,11 @@ import java.util.stream.Collectors;
 
 public class RepositoryController {
 
+    /**
+     * Crea un repositorio remoto a partir de una carpeta local.
+     * @param directory
+     * @throws DomainException
+     */
     public static void createRepository(File directory) throws DomainException {
         MongoDBConnection connection = MongoDBConnection.getInstance();
 
@@ -32,6 +37,11 @@ public class RepositoryController {
         }
     }
 
+    /**
+     * Elimina un repositorio a partir de su nombre.
+     * @param repositoryName
+     * @throws DomainException
+     */
     public static void deleteRepository(String repositoryName) throws DomainException {
         MongoDBConnection connection = MongoDBConnection.getInstance();
 
@@ -41,6 +51,10 @@ public class RepositoryController {
 
     }
 
+    /**
+     * Devuelve un listado de los nombres de los repositorios de la base de datos
+     * @return
+     */
     public static List<String> getRepositoryNames() {
 
         MongoDBConnection connection = MongoDBConnection.getInstance();
@@ -51,6 +65,13 @@ public class RepositoryController {
         return onlyUserRepositories(repositories, connection.getDatabaseName());
     }
 
+    /**
+     * Muestra solo los repositorios creados por el usuario. Elimina de la lista los repositorios creados para
+     * gestionar archivos grandes.
+     * @param repositories
+     * @param database
+     * @return
+     */
     private static List<String> onlyUserRepositories(List<String> repositories, String database) {
 
         List<String> userRepositories;
@@ -62,11 +83,21 @@ public class RepositoryController {
         return userRepositories;
     }
 
+    /**
+     * Comprueba  si el repositorio existe
+     * @param repositoryName
+     * @return
+     */
     public static boolean repositoryExists(String repositoryName) {
         List<String> repos = getRepositoryNames();
         return repos.stream().anyMatch(repo -> repo.equals(repositoryName));
     }
 
+    /**
+     * Clona un repositorio. Descarga todos los archivos remotos a local y crea las carpetas necesarias para ello.
+     * @param repository
+     * @throws DomainException
+     */
     public static void cloneRepository(String repository) throws DomainException {
         MongoDBConnection connection = MongoDBConnection.getInstance();
         try {

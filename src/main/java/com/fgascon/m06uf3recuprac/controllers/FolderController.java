@@ -12,7 +12,10 @@ import java.util.List;
 
 public class FolderController {
 
-
+    /**
+     * Envia una peticion a la capa de datos para que le devuelva una lista de nombres de carpetas
+     * @return
+     */
     public static List<String> getFolderNames() {
         List<String> folders = Collections.emptyList();
 
@@ -23,6 +26,11 @@ public class FolderController {
         return folders;
     }
 
+    /**
+     * Envia una peticion a la capa de datos para que le devuelva una lista de nombres de los archivos de una carpeta
+     * @param folder
+     * @return
+     */
     public static List<String> getFolderContent(String folder) {
         List<String> folderItems = Collections.emptyList();
 
@@ -33,6 +41,13 @@ public class FolderController {
         return folderItems;
     }
 
+    /**
+     * Envia una peticion a la capa de datos para que anada los archivos de una carpeta a la base de datos. Lo hace de
+     * manera recursiva.
+     * @param localDirectory
+     * @return
+     * @throws DomainException
+     */
     public static String addFolderToRemoteRepository(File localDirectory) throws DomainException {
         MongoDBConnection connection = Main.connection;
         StringBuilder errorFiles = new StringBuilder();
@@ -55,6 +70,10 @@ public class FolderController {
        return errorFiles.toString();
     }
 
+    /**
+     * Envia una peticion a la capa de datos para que elimine una carpeta a partir de su nombre
+     * @param remoteDirectory
+     */
     public static void deleteFolderFromRepository(String remoteDirectory) {
         MongoDBConnection connection = Main.connection;
 
@@ -62,6 +81,12 @@ public class FolderController {
 
     }
 
+    /**
+     * Descarga una los archivos de una carpeta y de las carpetas dentro de ella, recursivamente. De remoto a local.
+     * @param remoteFolder
+     * @return
+     * @throws DomainException
+     */
     public static String downloadRemoteFolder(String remoteFolder) throws DomainException {
         MongoDBConnection connection = Main.connection;
         StringBuilder errorFiles = new StringBuilder();
@@ -95,6 +120,12 @@ public class FolderController {
         return errorFiles.toString();
     }
 
+    /**
+     * Envia una peticion a la capa de datos para que le devuelva una lista de nombres de los archivos de una carpeta,
+     * de manera recursiva.
+     * @param remoteFolder
+     * @return
+     */
     public static List<String> getRecursiveFolderContent(String remoteFolder) {
         List<String> folderItems = Collections.emptyList();
 

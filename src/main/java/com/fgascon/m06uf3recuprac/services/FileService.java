@@ -19,6 +19,12 @@ import java.util.List;
 
 public class FileService {
 
+    /**
+     * Anade un fichero remoto a la base de datos.
+     * @param localFile
+     * @param connection
+     * @throws DataException
+     */
     public static void addFileToRemoteRepository(File localFile, MongoDBConnection connection) throws DataException {
         RemoteFile remoteFile = new RemoteFile();
 
@@ -48,6 +54,13 @@ public class FileService {
 
     }
 
+    /**
+     * Elimina un fichero remoto de la base de datos. Elimina todas sus versiones.
+     * @param remoteFile
+     * @param remoteFolder
+     * @param connection
+     * @throws DataException
+     */
     public static void deleteFileFromRepository(String remoteFile, String remoteFolder, MongoDBConnection connection) throws DataException {
 
         MongoCursor<Document> files = connection.getCollection().find(Filters.and(
@@ -64,10 +77,22 @@ public class FileService {
         files.close();
     }
 
+    /**
+     * Obtiene el MD5 de un fichero remoto.
+     * @param doc
+     * @return
+     */
     public static String getMd5(Document doc) {
         return doc.getString("md5");
     }
 
+    /**
+     * Busca un Document (MongoDB) de un fichero remoto en la base de datos y lo devuelve.
+     * @param name
+     * @param folder
+     * @param connection
+     * @return
+     */
     public static Document findRemoteFile(String name, String folder, MongoDBConnection connection) {
 
         Document file = connection.getCollection()
@@ -78,11 +103,24 @@ public class FileService {
         return file;
     }
 
+    /**
+     * Devuelve la fecha de la ultima modificacion de un fichero remoto
+     * @param doc
+     * @return
+     */
     public static LocalDateTime getLastModified(Document doc) {
         String date = doc.getString("lastModified");
         return Convert.ToLocalDateTime(date);
     }
 
+    /**
+     * Descarga un fichero remoto y crea un archivo local con la informacion extraida.
+     * @param remoteName
+     * @param remoteFolder
+     * @param localFile
+     * @param connection
+     * @throws DataException
+     */
     public static void downloadRemoteFile(String remoteName, String remoteFolder, File localFile, MongoDBConnection connection) throws DataException {
         Document remoteDoc = findRemoteFile(remoteName, remoteFolder, connection);
         String text = getTextFromRemote(remoteDoc);
@@ -98,6 +136,12 @@ public class FileService {
         writeDataIntoFile(localFile, text);
     }
 
+    /**
+     * Escribe un texto en un archivo local.
+     * @param localFile
+     * @param text
+     * @throws DataException
+     */
     private static void writeDataIntoFile(File localFile, String text) throws DataException {
         try {
             FileWriter fw = new FileWriter(localFile);
@@ -109,6 +153,11 @@ public class FileService {
         }
     }
 
+    /**
+     * Clona un archivo remoto y todas las carpetas necesarias.
+     * @param remote
+     * @throws DataException
+     */
     public static void cloneRemoteFile(RemoteFile remote) throws DataException {
         String remotePath = remote.getFolder() + Convert.GET_URL_SEPARATOR + remote.getName();
         String sLocalFolder = Convert.toLocalPath(remote.getFolder());
@@ -127,10 +176,21 @@ public class FileService {
 
     }
 
+    /**
+     * Obtiene el texto de un fichero remoto.
+     * @param doc
+     * @return
+     */
     private static String getTextFromRemote(Document doc) {
         return doc.getString("text");
     }
 
+    /**
+     * Obtiene el texto de un fichero local pero lo trocea en lineas.
+     * @param localFile
+     * @return
+     * @throws DataException
+     */
     public static List<String> getLocalTextLines(File localFile) throws DataException {
         List<String> localLines = Collections.emptyList();
         try {
@@ -143,6 +203,13 @@ public class FileService {
         return localLines;
     }
 
+    /**
+     * Obtiene el texto de un fichero remoto pero lo trocea en lineas.
+     * @param remoteName
+     * @param remoteFolder
+     * @param connection
+     * @return
+     */
     public static List<String> getRemoteTextLines(String remoteName, String remoteFolder, MongoDBConnection connection) {
         Document remoteDoc = findRemoteFile(remoteName, remoteFolder, connection);
         String remoteText = getTextFromRemote(remoteDoc);

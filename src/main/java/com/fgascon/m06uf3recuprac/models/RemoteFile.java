@@ -20,6 +20,11 @@ public class RemoteFile {
 
     }
 
+    /**
+     * Transforma un documento a la clase RemoteFile
+     * @param doc
+     * @return
+     */
     public static RemoteFile DocumentToRemoteFile(Document doc) {
         RemoteFile file = new RemoteFile();
 
@@ -34,6 +39,10 @@ public class RemoteFile {
         return file;
     }
 
+    /**
+     * Transforma un el objeto a Document para usarlo en una base de datos MongoDB.
+     * @return
+     */
     public Document mapToDocument() {
         Document document = new Document()
                 .append("name", name)

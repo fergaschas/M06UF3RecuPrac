@@ -33,12 +33,16 @@ public class MainView implements Initializable {
     @FXML
     private Pane window;
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadRepositories();
         repositoryList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
+    /**
+     * Carga los repositorios de la base de datos
+     */
     private void loadRepositories() {
         repositoryList.getItems().clear();
         List<String> repositoryNames;
@@ -48,6 +52,10 @@ public class MainView implements Initializable {
 
     }
 
+    /**
+     * Elige una carpeta y crea un repositorio a partir de ella.
+     * @param actionEvent
+     */
     public void createNewRepository(ActionEvent actionEvent) {
         Stage stage = (Stage) window.getScene().getWindow();
 
@@ -68,6 +76,10 @@ public class MainView implements Initializable {
         loadRepositories();
     }
 
+    /**
+     * Elimina el repositorio seleccionado.
+     * @param actionEvent
+     */
     public void dropRepository(ActionEvent actionEvent) {
         String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();
 
@@ -84,6 +96,10 @@ public class MainView implements Initializable {
         loadRepositories();
     }
 
+    /**
+     * Abre un repositorio. Abre una ventana nueva donde se puede trabajar con el repositorio seleccionado.
+     * @param actionEvent
+     */
     public void openRepository(ActionEvent actionEvent) {
 
         String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();
@@ -100,6 +116,10 @@ public class MainView implements Initializable {
         }
     }
 
+    /**
+     * Clona todos los ficheros del repositorio al ordenador local.
+     * @param actionEvent
+     */
     public void cloneRepository(ActionEvent actionEvent) {
 
         String selectedRepository = repositoryList.getSelectionModel().getSelectedItem();

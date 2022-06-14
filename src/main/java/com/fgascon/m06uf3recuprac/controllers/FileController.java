@@ -17,6 +17,11 @@ import java.util.List;
 
 public class FileController {
 
+    /**
+     * Envia un archivo a la capa de datos para que lo procese si cumple los requisitos necesarios.
+     * @param localFile
+     * @throws DomainException
+     */
     public static void addFileToRemoteRepository(File localFile) throws DomainException {
         MongoDBConnection connection = Main.connection;
 
@@ -39,6 +44,7 @@ public class FileController {
 
         }
 
+
         try {
             FileService.addFileToRemoteRepository(localFile, connection);
         } catch (DataException e) {
@@ -46,6 +52,13 @@ public class FileController {
         }
     }
 
+    /**
+     * Comprueba si la fecha de modificacion del archivo local es mayor o igual a la del archivo remoto. Si es mas antiguo
+     * devuelve true.
+     * @param localFile
+     * @param remoteFile
+     * @return
+     */
     private static boolean isOlderThanRemote(File localFile, Document remoteFile) {
         LocalDateTime localFileDate = Extract.dateOfLastModification(localFile);
         LocalDateTime remoteFileDate = FileService.getLastModified(remoteFile);
@@ -54,6 +67,12 @@ public class FileController {
         return !remoteFileDate.isBefore(localFileDate);
     }
 
+    /**
+     * Compara el valor del MD5 de un archivo local y uno remoto. Devuelve true si son iguales.
+     * @param localFile
+     * @param remoteFile
+     * @return
+     */
     private static boolean hasTheSameChecksum(File localFile, Document remoteFile) {
         try {
             String localMd5 = Extract.md5AsString(localFile);
@@ -67,6 +86,11 @@ public class FileController {
         }
     }
 
+    /**
+     * Comprueba que la extension del archivo sea una de las que requiere el dominio.
+     * @param localFile
+     * @return
+     */
     private static boolean hasRequiredExtension(File localFile) {
         String[] availableExtensions = {"java", "txt", "xml", "html"};
 
@@ -80,6 +104,12 @@ public class FileController {
         return false;
     }
 
+    /**
+     * Envia un nombre de archivo y de carpeta de un archivo remoto para que la capa de datos lo elimine.
+     * @param remoteFile
+     * @param remoteFolder
+     * @throws DomainException
+     */
     public static void deleteFileFromRepository(String remoteFile, String remoteFolder) throws DomainException {
         MongoDBConnection connection = Main.connection;
 
@@ -90,6 +120,12 @@ public class FileController {
         }
     }
 
+    /**
+     * Descarga un fichero remoto a partir del nombre y el nombre de archivo y carpeta remotos.
+     * @param remoteName
+     * @param remoteFolder
+     * @throws DomainException
+     */
     public static void downloadRemoteFile(String remoteName, String remoteFolder) throws DomainException {
         MongoDBConnection connection = MongoDBConnection.getInstance();
 
@@ -120,6 +156,13 @@ public class FileController {
 
     }
 
+    /**
+     * Obtiene una lista de lineas de texto de un archivo local.
+     * @param remoteName
+     * @param remoteFolder
+     * @return
+     * @throws DomainException
+     */
     public static List<String> getLocalFileText(String remoteName, String remoteFolder) throws DomainException {
 
         String remotePath = Convert.getRemotePath(remoteName, remoteFolder);
@@ -136,6 +179,12 @@ public class FileController {
         return localLines;
     }
 
+    /**
+     * Obtiene una lista de lineas de texto de un archivo remoto
+     * @param remoteName
+     * @param remoteFolder
+     * @return
+     */
     public static List<String> getRemoteFileText(String remoteName, String remoteFolder) {
         MongoDBConnection connection = MongoDBConnection.getInstance();
 
@@ -144,6 +193,12 @@ public class FileController {
         return remoteLines;
     }
 
+    /**
+     * Comprueba que los archivos local y remoto sean diferentes.
+     * @param remoteName
+     * @param remoteFolder
+     * @throws DomainException
+     */
     public static void checkCompareFiles(String remoteName, String remoteFolder) throws DomainException {
         MongoDBConnection connection = MongoDBConnection.getInstance();
         String remotePath = Convert.getRemotePath(remoteName, remoteFolder);
@@ -156,8 +211,8 @@ public class FileController {
         if (remoteFile != null) {
             if (hasTheSameChecksum(localFile, remoteFile))
                 throw new DomainException("The md5 is the same");
-            if (isOlderThanRemote(localFile, remoteFile))
-                throw new DomainException("The last modification is not after the remote file");
+            //if (isOlderThanRemote(localFile, remoteFile))
+              //  throw new DomainException("The last modification is not after the remote file");
         }
     }
 }

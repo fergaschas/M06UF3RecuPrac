@@ -9,12 +9,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Extract {
+    /**
+     * extrae la extension de un archivo.
+     * @param file
+     * @return
+     */
     public static String fileExtension(File file) {
         if (!file.getName().contains(".")) return "";
 
         return file.getName().substring(file.getName().lastIndexOf(".") + 1);
     }
 
+    /**
+     * extrae la url de la carpeta de un archivo
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public static String fileFolder(File file) throws IOException {
         String path = file.getCanonicalPath();
 
@@ -27,6 +38,11 @@ public class Extract {
 
     }
 
+    /**
+     * extrae la fecha de ultima modificacion de un archivo.
+     * @param file
+     * @return
+     */
     public static LocalDateTime dateOfLastModification(File file) {
         long epochTime = file.lastModified();
 
@@ -34,6 +50,13 @@ public class Extract {
                 TimeZone.getDefault().toZoneId());
     }
 
+    /**
+     * extrae el MD5 de un fichero en formato String
+     * @param file
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     public static String md5AsString(File file) throws IOException, NoSuchAlgorithmException {
         byte[] b = getMd5(file);
         StringBuilder md5 = new StringBuilder();
@@ -44,6 +67,13 @@ public class Extract {
         return md5.toString();
     }
 
+    /**
+     * Obtiene el MD5 de un fichero.
+     * @param file
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     private static byte[] getMd5(File file) throws IOException, NoSuchAlgorithmException {
         InputStream fis = new FileInputStream(file);
 
@@ -62,6 +92,12 @@ public class Extract {
         return complete.digest();
     }
 
+    /**
+     * Extrae el texto de un fichero
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
     public static String textFromFile(File file) throws FileNotFoundException {
         Scanner read = new Scanner(file);
         StringBuilder text = new StringBuilder();
@@ -73,6 +109,11 @@ public class Extract {
         return text.toString();
     }
 
+    /**
+     * Separa un texto en lineas acabadas en salto de linea.
+     * @param text
+     * @return
+     */
     public static List<String> linesFromText(String text) {
         List<String> lines;
 
@@ -81,11 +122,21 @@ public class Extract {
         return lines;
     }
 
+    /**
+     * extrae el nombre de archivo remoto de una url remota.
+     * @param remotePath
+     * @return
+     */
     public static String nameFromRemotePath(String remotePath) {
         int lastSeparator = remotePath.lastIndexOf(Convert.GET_URL_SEPARATOR);
         return remotePath.substring(lastSeparator + 1);
     }
 
+    /**
+     * extrae el nombre de carpeta remota de una url remota.
+     * @param remotePath
+     * @return
+     */
     public static String folderFromRemotePath(String remotePath) {
         int lastSeparator = remotePath.lastIndexOf(Convert.GET_URL_SEPARATOR);
         return remotePath.substring(0, lastSeparator);

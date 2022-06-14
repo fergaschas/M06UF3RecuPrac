@@ -28,6 +28,9 @@ public class CompareFileDialog {
         this.pane = generatePane(localText, remoteText);
     }
 
+    /**
+     * Genera un dialogo con dos listas, una con el texto en local y la otra con el texto remoto.
+     */
     public void showDialog() {
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -42,6 +45,12 @@ public class CompareFileDialog {
 
     }
 
+    /**
+     * Genera la vista con los componentes FXML y rellena las listas con las lineas de texto local y remoto.
+     * @param localText
+     * @param remoteText
+     * @return
+     */
     private BorderPane generatePane(List<String> localText, List<String> remoteText) {
         BorderPane pane = new BorderPane();
 
@@ -56,6 +65,10 @@ public class CompareFileDialog {
         return pane;
     }
 
+    /**
+     * Obtiene el texto del fichero local.
+     * @return
+     */
     private List<String> getLocalFileText() {
         List<String> localText = Collections.emptyList();
 
@@ -68,6 +81,10 @@ public class CompareFileDialog {
         return localText;
     }
 
+    /**
+     * Obtiene el texto del fichero remoto.
+     * @return
+     */
     private List<String> getRemoteFileText() {
         return FileController.getRemoteFileText(fileName, folderName);
     }

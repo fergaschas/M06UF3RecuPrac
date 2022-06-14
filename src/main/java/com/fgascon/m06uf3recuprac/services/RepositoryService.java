@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RepositoryService {
+    /**
+     * Crea un repositorio, creando una coleccion en la base de datos, si no existe.
+     * @param repository
+     * @param connection
+     * @throws MongoDBConnectionException
+     */
     public static void createRepository(String repository, MongoDBConnection connection) throws MongoDBConnectionException {
         boolean collectionExists = false;
 
@@ -33,6 +39,11 @@ public class RepositoryService {
         connection.getDatabase().createCollection(repository);
     }
 
+    /**
+     * Extrae el nombre de los repositorios de una base de datos
+     * @param connection
+     * @return
+     */
     public static List<String> getRepositoryNames(MongoDBConnection connection) {
         List<String> repositories = new ArrayList<>();
 
@@ -45,6 +56,11 @@ public class RepositoryService {
         return repositories;
     }
 
+    /**
+     * Elimina el repositorio a partir de su nombre.
+     * @param repositoryName
+     * @param connection
+     */
     public static void deleteRepository(String repositoryName, MongoDBConnection connection) {
 
         MongoCollection<Document> repository = connection.getDatabase().getCollection(repositoryName);
@@ -52,6 +68,12 @@ public class RepositoryService {
         repository.drop();
     }
 
+    /**
+     * Clona un repositorio remoto a local(de momento todos los archivos).
+     * @param repository
+     * @param connection
+     * @throws DataException
+     */
     public static void cloneRepository(String repository, MongoDBConnection connection) throws DataException {
 
         // estaria bien optimizar esto

@@ -48,12 +48,17 @@ public class RepositoryView implements Initializable {
         refreshFolderList();
     }
 
-
+    /**
+     * Escribe el nombre del repositorio en el titulo
+     */
     private void setRepository() {
         String repositoryName = Main.connection.getCollectionName();
         repositoryTitle.setText(repositoryName);
     }
 
+    /**
+     * refresca la lista de carpetas remotas del repositorio.
+     */
     private void refreshFolderList() {
         folderList.getItems().clear();
         List<String> folders;
@@ -67,6 +72,10 @@ public class RepositoryView implements Initializable {
         refreshFolderPreviewList(folderList.getSelectionModel().getSelectedItem());
     }
 
+    /**
+     * muestra los archivos de una carpeta remota. Muestra solo los archivos de ese nivel.
+     * @param folder
+     */
     private void refreshFolderPreviewList(String folder) {
         folderPreviewList.getItems().clear();
         if (folder == null || folder.isEmpty()) return;
@@ -81,11 +90,19 @@ public class RepositoryView implements Initializable {
         }
     }
 
+    /**
+     * muestra los archivos de la carpeta a la que se hace clic.
+     * @param mouseEvent
+     */
     public void showFolderFiles(MouseEvent mouseEvent) {
         String selectedFolder = folderList.getSelectionModel().getSelectedItem();
         refreshFolderPreviewList(selectedFolder);
     }
 
+    /**
+     * Anade una carpeta al repositorio remoto y actualiza la lista de carpetas.
+     * @param actionEvent
+     */
     public void addFolder(ActionEvent actionEvent) {
         connection = Main.connection;
         if (connection == null) return;
@@ -107,6 +124,10 @@ public class RepositoryView implements Initializable {
 
     }
 
+    /**
+     * Elimina la carpeta seleccionada.
+     * @param actionEvent
+     */
     public void deleteFolder(ActionEvent actionEvent) {
         String selectedFolder = folderList.getSelectionModel().getSelectedItem();
 
@@ -117,6 +138,10 @@ public class RepositoryView implements Initializable {
         refreshFolderList();
     }
 
+    /**
+     * Anade un fichero remoto a partir del archivo local seleccionado
+     * @param actionEvent
+     */
     public void addFile(ActionEvent actionEvent) {
         connection = Main.connection;
         if (connection == null) return;
@@ -141,6 +166,10 @@ public class RepositoryView implements Initializable {
         refreshFolderPreviewList(remoteFolder);
     }
 
+    /**
+     * Elimina el archivo remoto seleccionado.
+     * @param actionEvent
+     */
     public void deleteFile(ActionEvent actionEvent) {
         String selectedFile = folderPreviewList.getSelectionModel().getSelectedItem();
         String selectedFolder = folderList.getSelectionModel().getSelectedItem();
@@ -156,6 +185,10 @@ public class RepositoryView implements Initializable {
         refreshFolderPreviewList(selectedFolder);
     }
 
+    /**
+     * Descarga la carpeta remota y todos los archivos pasan a estar tambien en local.
+     * @param actionEvent
+     */
     public void downloadFolder(ActionEvent actionEvent) {
         String remoteFolder = folderList.getSelectionModel().getSelectedItem();
 
@@ -168,6 +201,10 @@ public class RepositoryView implements Initializable {
         }
     }
 
+    /**
+     * Descarga un archivo de remoto a local.
+     * @param actionEvent
+     */
     public void downloadFile(ActionEvent actionEvent) {
         String remoteName = folderPreviewList.getSelectionModel().getSelectedItem();
         String remoteFolder = folderList.getSelectionModel().getSelectedItem();
@@ -182,6 +219,10 @@ public class RepositoryView implements Initializable {
         }
     }
 
+    /**
+     * Vuelve a la vista de inicio.
+     * @param actionEvent
+     */
     public void goToMainView(ActionEvent actionEvent) {
         try {
             Main.changeScene(MAIN_VIEW_URL_FXML);
@@ -190,6 +231,11 @@ public class RepositoryView implements Initializable {
         }
     }
 
+    /**
+     * Compara los archivos de una carpeta, mirando si tienen el mismo md5 y abre un dialog con una lista de archivos
+     * que no son iguales
+     * @param actionEvent
+     */
     public void compareFolder(ActionEvent actionEvent) {
 
         String remoteFolder = folderList.getSelectionModel().getSelectedItem();
@@ -199,6 +245,10 @@ public class RepositoryView implements Initializable {
         comparableFilesDialog.showDialog();
     }
 
+    /**
+     * Muestra un dialogo con los textos de los archivos local y remoto si son diferentes
+     * @param actionEvent
+     */
     public void compareFile(ActionEvent actionEvent) {
         String remoteFolder = folderList.getSelectionModel().getSelectedItem();
         String remoteFile = folderPreviewList.getSelectionModel().getSelectedItem();

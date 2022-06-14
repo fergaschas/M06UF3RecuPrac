@@ -21,6 +21,11 @@ import static com.fgascon.m06uf3recuprac.utils.Convert.GET_URL_SEPARATOR;
 import static com.fgascon.m06uf3recuprac.utils.Convert.GET_URL_SEPARATOR_CHAR;
 
 public class FolderService {
+    /**
+     * Obtiene los nombres de todas las carpetas del repositorio actual.
+     * @param connection
+     * @return
+     */
     public static List<String> getFolders(MongoDBConnection connection) {
         List<String> folderNames = new ArrayList<>();
 
@@ -41,9 +46,8 @@ public class FolderService {
     }
 
     /**
-     * Finds all file names from a remote folder. The list doesn't have repeated names, only shows the last file
-     * added.
-     *
+     * Encuentra todos los archivos de una carpeta remota. La lista no mnuestra repetidos, solo muestra el ultimo
+     * que se anadio.
      * @param remoteFolder path of the remote folder
      * @param connection   instance of a MongoDBConnection
      * @return a list of file names
@@ -65,6 +69,11 @@ public class FolderService {
         return fileNames;
     }
 
+    /**
+     * Elimina los ficheros de una carpeta remota.
+     * @param remoteDirectory
+     * @param connection
+     */
     public static void deleteFilesFromFolder(String remoteDirectory, MongoDBConnection connection) {
         MongoCursor<Document> cursorFolderItems = connection.getCollection()
                 .find(Filters.eq("folder", remoteDirectory))
@@ -77,6 +86,12 @@ public class FolderService {
         cursorFolderItems.close();
     }
 
+    /**
+     * Obtiene los ficheros de una carpeta y de las carpetas que tenga en su interior de manera recursiva.
+     * @param remoteFolder
+     * @param connection
+     * @return
+     */
     public static List<String> getRecursiveFolderItems(String remoteFolder, MongoDBConnection connection) {
         List<String> fileNames = new ArrayList<>();
 
