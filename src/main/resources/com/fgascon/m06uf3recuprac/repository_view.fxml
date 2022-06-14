@@ -28,10 +28,12 @@
       <HBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#addFolder" text="Add Folder" />
+            <CheckBox fx:id="forceFolder" mnemonicParsing="false" text="force" />
             <Button layoutX="958.0" layoutY="10.0" mnemonicParsing="false" onAction="#compareFolder" text="Compare Folder" />
             <Button layoutX="81.0" layoutY="48.0" mnemonicParsing="false" onAction="#deleteFolder" text="Delete Folder" />
             <Button layoutX="372.0" layoutY="48.0" mnemonicParsing="false" onAction="#downloadFolder" text="Download Folder" />
             <Button mnemonicParsing="false" onAction="#addFile" text="Add File" />
+            <CheckBox fx:id="forceFile" mnemonicParsing="false" text="force" />
             <Button layoutX="1326.0" layoutY="10.0" mnemonicParsing="false" onAction="#compareFile" text="Compare File" />
             <Button mnemonicParsing="false" onAction="#deleteFile" text="Delete File" />
             <Button layoutX="629.0" layoutY="48.0" mnemonicParsing="false" onAction="#downloadFile" text="Download File" />

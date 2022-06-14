@@ -15,6 +15,7 @@ import com.fgascon.m06uf3recuprac.views.dialogs.CompareFileDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -35,6 +36,8 @@ import static com.fgascon.m06uf3recuprac.utils.OS.homeDirectory;
 public class RepositoryView implements Initializable {
 
     private static final String MAIN_VIEW_URL_FXML = "/com/fgascon/m06uf3recuprac/main_view";
+    public CheckBox forceFolder;
+    public CheckBox forceFile;
     private MongoDBConnection connection;
     public ListView<String> folderList;
     public ListView<String> folderPreviewList;
@@ -113,9 +116,10 @@ public class RepositoryView implements Initializable {
         directoryChooser.setInitialDirectory(OS.localRepository(connection));
 
         File localDirectory = directoryChooser.showDialog(stage);
+        boolean force = forceFolder.isSelected();
 
         try {
-            FolderController.addFolderToRemoteRepository(localDirectory);
+            FolderController.addFolderToRemoteRepository(localDirectory, force);
         } catch (DomainException e) {
             AlertMessage.showError("ERROR", e.getMessage());
         }
@@ -156,9 +160,10 @@ public class RepositoryView implements Initializable {
             fileChooser.setInitialDirectory(new File(Convert.toLocalPath(remoteFolder)));
 
         File localFile = fileChooser.showOpenDialog(stage);
+        boolean force = forceFile.isSelected();
 
         try {
-            FileController.addFileToRemoteRepository(localFile);
+            FileController.addFileToRemoteRepository(localFile, force);
         } catch (DomainException e) {
             AlertMessage.showError("ERROR", e.getMessage());
         }

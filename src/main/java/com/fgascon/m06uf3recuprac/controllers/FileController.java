@@ -18,11 +18,11 @@ import java.util.List;
 public class FileController {
 
     /**
-     * Envia un archivo a la capa de datos para que lo procese si cumple los requisitos necesarios.
+     * Envia un archivo a la capa de datos para que lo procese si cumple los requisitos necesarios o se hace un force.
      * @param localFile
      * @throws DomainException
      */
-    public static void addFileToRemoteRepository(File localFile) throws DomainException {
+    public static void addFileToRemoteRepository(File localFile, boolean force) throws DomainException {
         MongoDBConnection connection = Main.connection;
 
         if (!localFile.isFile())
@@ -30,20 +30,21 @@ public class FileController {
         if (!hasRequiredExtension(localFile))
             throw new DomainException("The file doesn't have the required extension");
 
-        try {
-            String folder = Convert.toRemotePath(Extract.fileFolder(localFile));
-            Document remoteFile = FileService.findRemoteFile(localFile.getName(), folder, connection);
-            if (remoteFile != null) {
-                if (hasTheSameChecksum(localFile, remoteFile))
-                    throw new DomainException("The md5 is the same");
-                if (isOlderThanRemote(localFile, remoteFile))
-                    throw new DomainException("The last modification is not after the remote file");
+        if(!force) {
+            try {
+                String folder = Convert.toRemotePath(Extract.fileFolder(localFile));
+                Document remoteFile = FileService.findRemoteFile(localFile.getName(), folder, connection);
+                if (remoteFile != null) {
+                    if (hasTheSameChecksum(localFile, remoteFile))
+                        throw new DomainException("The md5 is the same");
+                    if (isOlderThanRemote(localFile, remoteFile))
+                        throw new DomainException("The last modification is not after the remote file");
+                }
+            } catch (IOException e) {
+                throw new DomainException("Error parsing paths from local to remote");
+
             }
-        } catch (IOException e) {
-            throw new DomainException("Error parsing paths from local to remote");
-
         }
-
 
         try {
             FileService.addFileToRemoteRepository(localFile, connection);

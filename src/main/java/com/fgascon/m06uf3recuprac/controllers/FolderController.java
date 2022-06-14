@@ -48,7 +48,7 @@ public class FolderController {
      * @return
      * @throws DomainException
      */
-    public static String addFolderToRemoteRepository(File localDirectory) throws DomainException {
+    public static String addFolderToRemoteRepository(File localDirectory, boolean force) throws DomainException {
         MongoDBConnection connection = Main.connection;
         StringBuilder errorFiles = new StringBuilder();
         File[] directoryFiles = localDirectory.listFiles();
@@ -57,10 +57,10 @@ public class FolderController {
 
         for (File file : directoryFiles) {
             if (file.isDirectory()) {
-                addFolderToRemoteRepository(file);
+                addFolderToRemoteRepository(file, force);
             } else {
                 try {
-                    FileController.addFileToRemoteRepository(file);
+                    FileController.addFileToRemoteRepository(file, force);
                 } catch (DomainException e) {
                     errorFiles.append(e.getMessage()).append(System.lineSeparator());
                 }
@@ -110,7 +110,7 @@ public class FolderController {
                 }
             } else {
                 try {
-                    FileController.addFileToRemoteRepository(file);
+                    FileController.addFileToRemoteRepository(file, false);
                 } catch (DomainException e) {
                     errorFiles.append(e.getMessage()).append(System.lineSeparator());
                 }
